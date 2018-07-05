@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+        xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd "
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.springframework.org/schema/beans">
+
+    <!-- 开启组件扫描 :为了实例化对象-->
+    <context:component-scan base-package="dao,service"></context:component-scan>
+
+    <!-- 引入db.properties -->
+    <!-- <context:property-placeholder location="classpath:db.properties"/>
+ <bean id="dataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${DRIVER}" />
+        <property name="url" value="${URL}" />
+        <property name="username" value="${USER}" />
+        <property name="password" value="${PASSWORD}" />
+    </bean>   -->
+
+    <!-- 配置DPCP数据源 -->
+    <!-- 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+            <property name="driverClassName" value="${DRIVER}"></property>
+            <property name="url" value="${URL}"></property>
+            <property name="username" value="${USER}"></property>
+            <property name="password" value="${PASSWORD}"></property>
+        </bean>
+         -->
+
+
+    <!-- 引入druid.propertise -->
+
+    <bean id = "propertyConfigurer"
+          class ="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
+        <property name = "locations" >
+            <list>
+                <value>classpath*:*.properties</value>
+            </list>
+        </property>
+    </bean>
+    <!-- druid连接池配置 -->
+    <!-- 阿里 druid 数据库连接池 -->
+    <bean id ="dataSource" class ="com.alibaba.druid.pool.DruidDataSource" destroy-method ="close">
+        <!-- 数据库基本信息配置 -->
+        <property name = "url" value = "${url}"/>
+        <property name = "username" value = "${username}"/>
+        <property name = "password" value = ""/>
+        <property name = "driverClassName" value = "${driverClassName}"/>
+        <property name = "filters" value = "${filters}"/>
+        <!-- 最大并发连接数 -->
+        <property name = "maxActive" value = "${maxActive}"/>
+        <!-- 初始化连接数量 -->
+        <property name = "initialSize" value = "${initialSize}"/>
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name = "maxWait" value = "${maxWait}"/>
+        <!-- 最小空闲连接数 -->
+        <property name = "minIdle" value = "${minIdle}"/>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name = "timeBetweenEvictionRunsMillis" value ="${timeBetweenEvictionRunsMillis}"/>
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name = "minEvictableIdleTimeMillis" value ="${minEvictableIdleTimeMillis}"/>
+        <property name = "validationQuery" value = "${validationQuery}"/>
+        <property name = "testWhileIdle" value = "${testWhileIdle}"/>
+        <property name = "testOnBorrow" value = "${testOnBorrow}"/>
+        <property name = "testOnReturn" value = "${testOnReturn}"/>
+        <property name = "maxOpenPreparedStatements" value ="${maxOpenPreparedStatements}"/>
+        <!-- 打开 removeAbandoned 功能 -->
+        <property name = "removeAbandoned" value = "${removeAbandoned}"/>
+        <!-- 1800 秒，也就是 30 分钟 -->
+        <property name = "removeAbandonedTimeout" value ="${removeAbandonedTimeout}"/>
+        <!-- 关闭 abanded 连接时输出错误日志 -->
+        <property name = "logAbandoned" value = "${logAbandoned}"/>
+    </bean>
+
+
+    <!-- 不保留mybatis配置文件 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 注入数据源 -->
+        <property name="dataSource" ref="dataSource"></property>
+        <!-- 不保留mybatis配置文件
+              通过SqlSessionFactoryBean的属性进行注入mybatis配置 -->
+        <property name="typeAliasesPackage" value="domain"></property>
+        <property name="configLocation" value="classpath:dao/mybatis-config.xml"></property>
+        <property name="mapperLocations" value="classpath:dao/UserMapper.xml" />
+
+    </bean>
+
+    <!-- 配置包扫描 -->
+    <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 注入sqlSessionFactory -->
+        <!-- springDI简单java类型使用value(Java提供的类型)
+                    引用类型:自定义类型,第三方提供的类对象使用ref -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+        <!-- 1.扫描Mapper包通过Mybatis创建Mapper的实现类
+              2.实例化mapper实现类的对象
+              替代SqlMapConfig.xml中的包扫描 -->
+        <property name="basePackage" value="dao"></property>
+    </bean>
+
+
+    <!-- 配置事务管理器 -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 注入DataSource -->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 开启事务驱动 -->
+    <tx:annotation-driven transaction-manager="txManager"/>
+
+</beans>

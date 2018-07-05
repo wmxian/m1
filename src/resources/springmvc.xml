@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+        xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd "
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:mvc="http://www.springframework.org/schema/mvc">
+
+
+
+    <!-- 开启springMVC注解驱动,也就是可以使用springMVC注解
+           无需在配置HandlerMa -->
+    <mvc:annotation-driven></mvc:annotation-driven>
+
+    <!-- 开启组件扫描 -->
+    <context:component-scan base-package="controller"></context:component-scan>
+
+    <!-- 配置视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/admin/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+
+
+    <!-- springMVC提供了一个默认servlet:对请求类型进行配置 -->
+    <mvc:default-servlet-handler/>
+
+</beans>
+
+
+

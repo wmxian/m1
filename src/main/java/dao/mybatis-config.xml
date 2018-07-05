@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!-- 通过Mybatis常量解决插入null -->
+        <setting name="jdbcTypeForNull" value="NULL"/>
+    </settings>
+
+
+    <!-- 给类起别名 -->
+    <typeAliases>
+        <package name="domain"/>
+    </typeAliases>
+
+    <mappers>
+        <package name="dao"/>
+    </mappers>
+
+
+
+</configuration>
+
+
